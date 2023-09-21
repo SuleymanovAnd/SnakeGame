@@ -7,6 +7,7 @@
 #include "PlayerPawnBase.generated.h"
 class UCameraComponent;
 class ASnakeBase;
+class AFood;
 
 UCLASS()
 class SNAKEGAME_API APlayerPawnBase : public APawn
@@ -22,6 +23,10 @@ public:
 		ASnakeBase* SnakeActor;
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<ASnakeBase> SnakeAktorClass;
+	UPROPERTY(BlueprintReadWrite)
+		AFood* SnakeFood;
+	UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<AFood> FoodClass;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -33,6 +38,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	void CreateSnakeAktor();
+	void CreateFoodActor();
+
 	UFUNCTION()
 		void HandlePlayerVerticalInput(float value);
 	UFUNCTION()

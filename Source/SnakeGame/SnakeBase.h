@@ -34,6 +34,7 @@ public:
 	UPROPERTY()
 		EMovementDirection LastMovementDirection;
 
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -45,5 +46,8 @@ public:
 	void AddSnakeElement(int ElementsNum = 1);
 
 	void Move();
+
+	UFUNCTION()
+		void SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActor* Other);
 
 };
