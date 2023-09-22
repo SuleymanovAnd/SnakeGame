@@ -33,7 +33,7 @@ public:
 		float ElementSize;
 	UPROPERTY()
 		EMovementDirection LastMovementDirection;
-
+	bool TikAxisChanged = false;
 
 protected:
 	// Called when the game starts or when spawned

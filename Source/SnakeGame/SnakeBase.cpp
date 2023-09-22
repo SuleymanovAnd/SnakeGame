@@ -26,8 +26,10 @@ void ASnakeBase::BeginPlay()
 // Called every frame
 void ASnakeBase::Tick(float DeltaTime)
 {
+
 	Super::Tick(DeltaTime);
 	Move();
+	TikAxisChanged = true;
 
 }
 
@@ -35,7 +37,16 @@ void ASnakeBase::AddSnakeElement(int ElementsNum)
 {
 	for (int i = 0; i < ElementsNum; i++) {
 		FVector NewLocation(SnakeElements.Num() * ElementSize, 0, 0);
-		FTransform NewTransform(NewLocation);
+		FTransform NewTransform;
+		if (SnakeElements.Num()>1) 
+		{ 
+			FVector LastLocation = SnakeElements.Last()->GetActorLocation(); 
+			NewTransform = FTransform(LastLocation);
+		}
+		else
+		{ 
+			NewTransform = FTransform(NewLocation);
+		}
 		ASnakeElementBase* NewSnakeElem = GetWorld()->SpawnActor<ASnakeElementBase>(SnakeElementClass, NewTransform);
 		NewSnakeElem->SnakeOwner = this;
 		int32 ElemIndex = SnakeElements.Add(NewSnakeElem);

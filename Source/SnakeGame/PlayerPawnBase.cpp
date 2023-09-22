@@ -9,11 +9,13 @@
 #include "Food.h"
 #include "Components/InputComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "SpeedBonus.h"
 
 static FORCEINLINE int32 RandRange(int32 Min, int32 Max)
 {
 	const int32 Range = (Max - Min) + 1;
-	return Min + FMath::RandHelper(Range);
+	int32 RandomValue = FMath::RandHelper(Range);
+	return Min + (RandomValue - RandomValue%60);
 }
 
 // Sets default values
@@ -31,7 +33,7 @@ void APlayerPawnBase::BeginPlay()
 {
 	Super::BeginPlay();
 	SetActorRotation(FRotator(-90, 0, 0));
-	CreateSnakeAktor();
+	CreateSnakeActor();
 	CreateFoodActor();
 	FInputModeGameOnly InputMode;
 	UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetInputMode(InputMode);
@@ -40,7 +42,9 @@ void APlayerPawnBase::BeginPlay()
 // Called every frame
 void APlayerPawnBase::Tick(float DeltaTime)
 {
+	
 	Super::Tick(DeltaTime);
+	
 	
 }
 
@@ -52,7 +56,7 @@ void APlayerPawnBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	PlayerInputComponent->BindAxis("Horizontal", this, &APlayerPawnBase::HandlePlayerHorizontalInput);
 }
 
-void APlayerPawnBase::CreateSnakeAktor()
+void APlayerPawnBase::CreateSnakeActor()
 {
 	SnakeActor = GetWorld()->SpawnActor<ASnakeBase>(SnakeAktorClass, FTransform());
 }
@@ -63,11 +67,10 @@ void APlayerPawnBase::CreateFoodActor()
 	FTransform NewTransform;
 	do {
 		findLocation = true;
-		auto X = RandRange(-500, 500);
-		auto Y = RandRange(-500, 500);
+		auto X = RandRange(-480, 480);
+		auto Y = RandRange(-480, 480);
 		FVector NewLocation(X, Y, 0);
-		FTransform TempTransforrm(NewLocation);
-		NewTransform = TempTransforrm;
+		NewTransform = FTransform(NewLocation);
 		for (auto element : SnakeActor->SnakeElements)
 		{
 			if(IsValid(element))
@@ -86,16 +89,59 @@ void APlayerPawnBase::CreateFoodActor()
 	
 	SnakeFood = GetWorld()->SpawnActor<AFood>(FoodClass, NewTransform);
 	SnakeFood->PlayerBase = this;
+	if (!IsValid(SpeedBonus))
+	{
+		int32 ChanceOfBonus = FMath::RandHelper(10);
+		if (ChanceOfBonus == 3  && SnakeActor->MovementSpeed > 0.2f)
+		{
+			this->CreateSpeedBonusActor();
+		}
+	}
+	
+}
+
+void APlayerPawnBase::CreateSpeedBonusActor()
+{
+	bool findLocation;
+	FTransform NewTransform;
+	do {
+		findLocation = true;
+		auto X = RandRange(-480, 480);
+		auto Y = RandRange(-480, 480);
+		FVector NewLocation(X, Y, 0);
+		NewTransform = FTransform(NewLocation);
+		for (auto element : SnakeActor->SnakeElements)
+		{
+			if (IsValid(element))
+			{
+				FVector ElementLocation = element->GetActorLocation();
+				FVector FoodLocation = SnakeFood->GetActorLocation();
+				if (NewLocation.X >= ElementLocation.X - 50 && NewLocation.X <= ElementLocation.X + 50 
+					&& NewLocation.X >= FoodLocation.X -50 && NewLocation.X <= FoodLocation.X + 50)
+				{
+					if (NewLocation.Y >= ElementLocation.Y - 50 && NewLocation.Y <= ElementLocation.Y + 50
+						&& NewLocation.Y >= FoodLocation.Y - 50 && NewLocation.Y <= FoodLocation.Y + 50)
+					{
+						findLocation = false;
+					}
+				}
+			}
+		}
+	} while (!findLocation);
+	SpeedBonus = GetWorld()->SpawnActor<ASpeedBonus>(SpeedBonusClass, NewTransform);
+	SpeedBonus->PlayerBase = this;
 }
 
 void APlayerPawnBase::HandlePlayerVerticalInput(float value)
 {
 	if (IsValid(SnakeActor)) {
-		if (value > 0 && SnakeActor->LastMovementDirection != EMovementDirection::DOWN) {
+		if (value > 0 && SnakeActor->LastMovementDirection != EMovementDirection::DOWN && SnakeActor->TikAxisChanged) {
 			SnakeActor->LastMovementDirection = EMovementDirection::UP;
+			SnakeActor->TikAxisChanged = false;
 		}
-		if (value < 0 && SnakeActor->LastMovementDirection != EMovementDirection::UP){
+		if (value < 0 && SnakeActor->LastMovementDirection != EMovementDirection::UP && SnakeActor->TikAxisChanged){
 			SnakeActor->LastMovementDirection = EMovementDirection::DOWN;
+			SnakeActor->TikAxisChanged = false;
 		}
 
 	}
@@ -104,11 +150,13 @@ void APlayerPawnBase::HandlePlayerVerticalInput(float value)
 void APlayerPawnBase::HandlePlayerHorizontalInput(float value)
 {
 	if (IsValid(SnakeActor)) {
-		if (value < 0 && SnakeActor->LastMovementDirection != EMovementDirection::LEFT) {
+		if (value < 0 && SnakeActor->LastMovementDirection != EMovementDirection::LEFT && SnakeActor->TikAxisChanged) {
 			SnakeActor->LastMovementDirection = EMovementDirection::RIGHT;
+			SnakeActor->TikAxisChanged = false;
 		}
-		if (value > 0 && SnakeActor->LastMovementDirection != EMovementDirection::RIGHT) {
+		if (value > 0 && SnakeActor->LastMovementDirection != EMovementDirection::RIGHT && SnakeActor->TikAxisChanged) {
 			SnakeActor->LastMovementDirection = EMovementDirection::LEFT;
+			SnakeActor->TikAxisChanged = false;
 		}
 
 	}
