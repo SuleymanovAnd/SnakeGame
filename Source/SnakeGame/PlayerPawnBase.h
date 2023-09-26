@@ -32,7 +32,11 @@ public:
 		ASpeedBonus* SpeedBonus;
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<ASpeedBonus> SpeedBonusClass;
-	
+	UPROPERTY(BlueprintReadOnly)
+		int32 Score;
+	UFUNCTION(BlueprintPure, Category = "Health")
+		int32 GetScore();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

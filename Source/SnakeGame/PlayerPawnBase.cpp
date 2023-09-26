@@ -28,10 +28,16 @@ APlayerPawnBase::APlayerPawnBase()
 	RootComponent = PawnCamera;
 }
 
+int32 APlayerPawnBase::GetScore()
+{
+	return APlayerPawnBase::Score;
+}
+
 // Called when the game starts or when spawned
 void APlayerPawnBase::BeginPlay()
 {
 	Super::BeginPlay();
+	Score = 0;
 	SetActorRotation(FRotator(-90, 0, 0));
 	CreateSnakeActor();
 	CreateFoodActor();

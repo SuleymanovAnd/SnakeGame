@@ -2,7 +2,7 @@
 
 
 #include "Food.h"
-#include"SnakeBase.h"
+#include "SnakeBase.h"
 #include "PlayerPawnBase.h"
 // Sets default values
 AFood::AFood()
@@ -33,6 +33,7 @@ void AFood::Interact(AActor* Interactor, bool bIsHead)
 		auto Snake = Cast<ASnakeBase>(Interactor);
 		if (IsValid(Snake)) {
 			Player->CreateFoodActor();
+			Player->Score++;
 			Snake->AddSnakeElement();
 			this->Destroy();
 		}
