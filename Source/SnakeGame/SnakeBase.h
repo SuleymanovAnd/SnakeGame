@@ -34,6 +34,7 @@ public:
 	UPROPERTY()
 		EMovementDirection LastMovementDirection;
 	bool TikAxisChanged = false;
+	bool SnakeDestroy = false;
 
 protected:
 	// Called when the game starts or when spawned
@@ -46,6 +47,8 @@ public:
 	void AddSnakeElement(int ElementsNum = 1);
 
 	void Move();
+
+	void DestroySnake();
 
 	UFUNCTION()
 		void SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActor* Other);

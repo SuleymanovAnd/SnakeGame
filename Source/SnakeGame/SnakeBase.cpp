@@ -91,6 +91,13 @@ void ASnakeBase::Move()
 	SnakeElements[0]->ToggleCollision();
 }
 
+void ASnakeBase::DestroySnake()
+{
+		MovementSpeed = 10000.f;
+		SetActorTickInterval(MovementSpeed);
+		SnakeDestroy = true;
+}
+
 void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActor* Other)
 {
 	if (IsValid(OverlappedElement))

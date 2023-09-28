@@ -32,9 +32,9 @@ public:
 		ASpeedBonus* SpeedBonus;
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<ASpeedBonus> SpeedBonusClass;
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Category = "Score")
 		int32 Score;
-	UFUNCTION(BlueprintPure, Category = "Health")
+	UFUNCTION(BlueprintPure, Category = "Score")
 		int32 GetScore();
 
 protected:
@@ -50,6 +50,7 @@ public:
 	void CreateSnakeActor();
 	void CreateFoodActor();
 	void CreateSpeedBonusActor();
+
 	UFUNCTION()
 		void HandlePlayerVerticalInput(float value);
 	UFUNCTION()
