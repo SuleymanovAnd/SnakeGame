@@ -49,6 +49,8 @@ public:
 
 	void AddSnakeElement(int ElementsNum = 1);
 
+	void RemoveSnakeElement(int Count);
+
 	void Move();
 
 	void DestroySnake();

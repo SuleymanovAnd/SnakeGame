@@ -9,6 +9,7 @@ class UCameraComponent;
 class ASnakeBase;
 class AFood;
 class ASpeedBonus;
+class AReductionBonus;
 
 UCLASS()
 class SNAKEGAME_API APlayerPawnBase : public APawn
@@ -32,6 +33,10 @@ public:
 		ASpeedBonus* SpeedBonus;
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<ASpeedBonus> SpeedBonusClass;
+	UPROPERTY(BlueprintReadWrite)
+		AReductionBonus* ReductionBonus;
+	UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<AReductionBonus> ReductionBonusClass;
 	UPROPERTY(BlueprintReadOnly, Category = "Score")
 		int32 Score;
 	UFUNCTION(BlueprintPure, Category = "Score")
@@ -50,6 +55,7 @@ public:
 	void CreateSnakeActor();
 	void CreateFoodActor();
 	void CreateSpeedBonusActor();
+	void CreateReductionBonusActor();
 
 	UFUNCTION()
 		void HandlePlayerVerticalInput(float value);

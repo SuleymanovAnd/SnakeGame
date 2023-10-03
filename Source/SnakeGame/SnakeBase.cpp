@@ -57,6 +57,22 @@ void ASnakeBase::AddSnakeElement(int ElementsNum)
 	}
 }
 
+void ASnakeBase::RemoveSnakeElement(int Count)
+{
+	int SnakeLength = SnakeElements.Num() - 1;
+	for (int i = SnakeLength; i > (SnakeLength - Count); i--)
+	{
+		auto LastElement = SnakeElements.Last();
+		SnakeElements.RemoveAt(i);
+		if (IsValid(LastElement))
+		{
+			LastElement->Destroy();
+		}
+	}
+	
+
+}
+
 void ASnakeBase::Move()
 {
 	

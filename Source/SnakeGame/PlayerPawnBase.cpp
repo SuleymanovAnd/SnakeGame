@@ -10,6 +10,8 @@
 #include "Components/InputComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "SpeedBonus.h"
+#include "ReductionBonus.h"
+
 
 static FORCEINLINE int32 RandRange(int32 Min, int32 Max)
 {
@@ -103,6 +105,13 @@ void APlayerPawnBase::CreateFoodActor()
 			this->CreateSpeedBonusActor();
 		}
 	}
+	if (!IsValid(ReductionBonus)) {
+		int32 ChanceOfBonus = FMath::RandHelper(10);
+		if (ChanceOfBonus > 1 && SnakeActor->SnakeElements.Num()>3)
+		{
+			this->CreateReductionBonusActor();
+		}
+	}
 	
 }
 
@@ -166,5 +175,39 @@ void APlayerPawnBase::HandlePlayerHorizontalInput(float value)
 		}
 
 	}
+}
+
+void APlayerPawnBase::CreateReductionBonusActor()
+{
+	bool findLocation;
+	FTransform NewTransform;
+	do {
+		findLocation = true;
+		auto X = RandRange(-480, 480);
+		auto Y = RandRange(-480, 480);
+		FVector NewLocation(X, Y, 0);
+		NewTransform = FTransform(NewLocation);
+		for (auto element : SnakeActor->SnakeElements)
+		{
+			if (IsValid(element))
+			{
+				FVector ElementLocation = element->GetActorLocation();
+				FVector FoodLocation = SnakeFood->GetActorLocation();
+				if (NewLocation.X >= ElementLocation.X - 50 && NewLocation.X <= ElementLocation.X + 50
+					&& NewLocation.X >= FoodLocation.X - 50 && NewLocation.X <= FoodLocation.X + 50)
+				{
+					if (NewLocation.Y >= ElementLocation.Y - 50 && NewLocation.Y <= ElementLocation.Y + 50
+						&& NewLocation.Y >= FoodLocation.Y - 50 && NewLocation.Y <= FoodLocation.Y + 50)
+					{
+						findLocation = false;
+					}
+				}
+			}
+		}
+	} while (!findLocation);
+	ReductionBonus = GetWorld()->SpawnActor<AReductionBonus>(ReductionBonusClass, NewTransform);
+	if(IsValid(ReductionBonus))
+	ReductionBonus->PlayerBase = this;
+
 }
 
