@@ -7,6 +7,7 @@
 #include "SnakeGameModeBase.generated.h"
 class APlayerPawnBase;
 
+UENUM()
 enum class EGamePlayState
 {
 	EPlaying,
@@ -29,11 +30,14 @@ public:
 
 	EGamePlayState GetCurrentState() const;
 
+	UFUNCTION()
 	void SetCurrentState(EGamePlayState NewState);
 
 
 private:
 	EGamePlayState CurrentState;
 	void HandleNewState(EGamePlayState NewState);
+	FTimerHandle Timer;
+	bool EndGame = false;
 
 };

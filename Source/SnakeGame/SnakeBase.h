@@ -33,7 +33,10 @@ public:
 		float ElementSize;
 	UPROPERTY()
 		EMovementDirection LastMovementDirection;
+
 	bool TikAxisChanged = false;
+
+	UPROPERTY(BlueprintReadOnly)
 	bool SnakeDestroy = false;
 
 protected:
@@ -52,5 +55,7 @@ public:
 
 	UFUNCTION()
 		void SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActor* Other);
+	UFUNCTION(BlueprintPure)
+		float GetMovementSpeed();
 
 };

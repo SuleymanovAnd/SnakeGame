@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "SnakeHUD.h"
 #include "PlayerPawnBase.h"
+#include "TimerManager.h"
 #include "UObject/ConstructorHelpers.h"
 #include "SnakeBase.h"
 
@@ -29,8 +30,14 @@ void ASnakeGameModeBase::BeginPlay()
 void ASnakeGameModeBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (BasePawn->SnakeActor->SnakeDestroy)
+	
+	
+	if (BasePawn->SnakeActor->SnakeDestroy && !EndGame) // End Game Delay
 	{
+		GetWorldTimerManager().SetTimer(Timer, 3, false);
+		EndGame = true;
+	}
+	if (!GetWorldTimerManager().IsTimerActive(Timer) && BasePawn->SnakeActor->SnakeDestroy) {
 		SetCurrentState(EGamePlayState::EGameOver);
 	}
 	

@@ -113,3 +113,8 @@ void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActo
 	}
 }
 
+float ASnakeBase::GetMovementSpeed()
+{
+	return MovementSpeed;
+}
+
