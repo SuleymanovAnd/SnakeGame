@@ -3,6 +3,7 @@
 
 #include "SpeedBonus.h"
 #include "PlayerPawnBase.h"
+#include "Kismet/GameplayStatics.h"
 #include"SnakeBase.h"
 
 
@@ -34,6 +35,10 @@ void ASpeedBonus::Interact(AActor* Interactor, bool bIsHead)
 		auto Player = Cast<APlayerPawnBase>(PlayerBase);
 		auto Snake = Cast<ASnakeBase>(Interactor);
 		if (IsValid(Snake)) {
+			if (IsValid(SpeedBonusEatingSound))
+			{
+				UGameplayStatics::SpawnSoundAtLocation(this, SpeedBonusEatingSound, GetActorLocation());
+			}
 			Snake->MovementSpeed -= 0.1f;
 			Snake->SetActorTickInterval(Snake->MovementSpeed);
 			this->Destroy();

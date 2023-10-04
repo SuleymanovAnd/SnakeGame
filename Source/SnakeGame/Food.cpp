@@ -3,6 +3,7 @@
 
 #include "Food.h"
 #include "SnakeBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "PlayerPawnBase.h"
 // Sets default values
 AFood::AFood()
@@ -32,6 +33,10 @@ void AFood::Interact(AActor* Interactor, bool bIsHead)
 		auto Player = Cast<APlayerPawnBase>(PlayerBase);
 		auto Snake = Cast<ASnakeBase>(Interactor);
 		if (IsValid(Snake)) {
+			if (IsValid(FoodEatingSound))
+			{
+				UGameplayStatics::SpawnSoundAtLocation(this, FoodEatingSound, GetActorLocation());
+			}
 			Player->CreateFoodActor();
 			Player->Score++;
 			Snake->AddSnakeElement();

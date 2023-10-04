@@ -37,10 +37,18 @@ public:
 		AReductionBonus* ReductionBonus;
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<AReductionBonus> ReductionBonusClass;
+	UPROPERTY(BlueprintReadWrite)
+		AReductionBonus* ReductionHalfBonus;
+	UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<AReductionBonus> ReductionHalfBonusClass;
 	UPROPERTY(BlueprintReadOnly, Category = "Score")
 		int32 Score;
-	UFUNCTION(BlueprintPure, Category = "Score")
-		int32 GetScore();
+	/** Half the full width of the field is indicated. (extreme limit relative to zero). The value must be divisible by 60 without a remainder. */
+	UPROPERTY(EditAnywhere, Category = "Field")
+		int32 FieldWidth = 480;
+	/** Half the full length of the field is indicated. (extreme limit relative to zero). The value must be divisible by 60 without a remainder. */
+	UPROPERTY(EditAnywhere, Category = "Field")
+		int32 FieldLength = 480;
 
 protected:
 	// Called when the game starts or when spawned
@@ -55,10 +63,12 @@ public:
 	void CreateSnakeActor();
 	void CreateFoodActor();
 	void CreateSpeedBonusActor();
-	void CreateReductionBonusActor();
+	void CreateReductionBonusActor(bool HalfBonus);
 
 	UFUNCTION()
 		void HandlePlayerVerticalInput(float value);
 	UFUNCTION()
 		void HandlePlayerHorizontalInput(float value);
+	UFUNCTION(BlueprintPure, Category = "Score")
+		int32 GetScore();
 };

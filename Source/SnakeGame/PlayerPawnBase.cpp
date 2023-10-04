@@ -13,11 +13,69 @@
 #include "ReductionBonus.h"
 
 
+
 static FORCEINLINE int32 RandRange(int32 Min, int32 Max)
 {
 	const int32 Range = (Max - Min) + 1;
 	int32 RandomValue = FMath::RandHelper(Range);
 	return Min + (RandomValue - RandomValue%60);
+}
+
+
+FTransform FindTransform(ASnakeBase* SnakeActor, int32 FLength, int32 FWidth) {
+	bool findLocation;
+	FTransform NewTransform;
+	do {
+		findLocation = true;
+		auto X = RandRange(-FWidth, FWidth);
+		auto Y = RandRange(-FLength, FLength);
+		FVector NewLocation(X, Y, 0);
+		NewTransform = FTransform(NewLocation);
+		for (auto element : SnakeActor->SnakeElements)
+		{
+			if (IsValid(element))
+			{
+				FVector ElementLocation = element->GetActorLocation();
+				if (NewLocation.X >= ElementLocation.X - 50 && NewLocation.X <= ElementLocation.X + 50)
+				{
+					if (NewLocation.Y >= ElementLocation.Y - 50 && NewLocation.Y <= ElementLocation.Y + 50)
+					{
+						findLocation = false;
+					}
+				}
+			}
+		}
+	} while (!findLocation);
+	return NewTransform;
+}
+FTransform FindTransform(ASnakeBase* SnakeActor, AFood* SnakeFood,int32 FLength, int32 FWidth) {
+	bool findLocation;
+	FTransform NewTransform;
+	do {
+		findLocation = true;
+		auto X = RandRange(-FWidth, FWidth);
+		auto Y = RandRange(-FLength, FLength);
+		FVector NewLocation(X, Y, 0);
+		NewTransform = FTransform(NewLocation);
+		for (auto element : SnakeActor->SnakeElements)
+		{
+			if (IsValid(element))
+			{
+				FVector ElementLocation = element->GetActorLocation();
+				FVector FoodLocation = SnakeFood->GetActorLocation();
+				if (NewLocation.X >= ElementLocation.X - 50 && NewLocation.X <= ElementLocation.X + 50
+					&& NewLocation.X >= FoodLocation.X - 50 && NewLocation.X <= FoodLocation.X + 50)
+				{
+					if (NewLocation.Y >= ElementLocation.Y - 50 && NewLocation.Y <= ElementLocation.Y + 50
+						&& NewLocation.Y >= FoodLocation.Y - 50 && NewLocation.Y <= FoodLocation.Y + 50)
+					{
+						findLocation = false;
+					}
+				}
+			}
+		}
+	} while (!findLocation);
+	return NewTransform;
 }
 
 // Sets default values
@@ -71,45 +129,29 @@ void APlayerPawnBase::CreateSnakeActor()
 
 void APlayerPawnBase::CreateFoodActor() 
 {
-	bool findLocation;
-	FTransform NewTransform;
-	do {
-		findLocation = true;
-		auto X = RandRange(-480, 480);
-		auto Y = RandRange(-480, 480);
-		FVector NewLocation(X, Y, 0);
-		NewTransform = FTransform(NewLocation);
-		for (auto element : SnakeActor->SnakeElements)
-		{
-			if(IsValid(element))
-			{ 
-			FVector ElementLocation = element->GetActorLocation();
-			if (NewLocation.X >= ElementLocation.X - 50 && NewLocation.X <= ElementLocation.X + 50) 
-			{
-				if (NewLocation.Y >= ElementLocation.Y - 50 && NewLocation.Y <= ElementLocation.Y + 50)
-				{
-					findLocation = false;
-				}
-			}
-			}
-		}
-	} while (!findLocation);
-	
-	SnakeFood = GetWorld()->SpawnActor<AFood>(FoodClass, NewTransform);
+	SnakeFood = GetWorld()->SpawnActor<AFood>(FoodClass, FindTransform(SnakeActor,FieldLength,FieldWidth));
 	SnakeFood->PlayerBase = this;
-	if (!IsValid(SpeedBonus))
+	int32 ChanceOfBonus = FMath::RandHelper(10);
+
+	if (!IsValid(SpeedBonus)) // Create SpeedBonus
 	{
-		int32 ChanceOfBonus = FMath::RandHelper(10);
 		if (ChanceOfBonus == 3  && SnakeActor->MovementSpeed > 0.2f)
 		{
 			this->CreateSpeedBonusActor();
 		}
 	}
-	if (!IsValid(ReductionBonus)) {
-		int32 ChanceOfBonus = FMath::RandHelper(10);
-		if (ChanceOfBonus > 1 && SnakeActor->SnakeElements.Num()>3)
+	if (!IsValid(ReductionBonus))  // Create ReductionBonus
+	{
+		if (ChanceOfBonus > 3 && ChanceOfBonus << 7 && SnakeActor->SnakeElements.Num()>3)
 		{
-			this->CreateReductionBonusActor();
+			this->CreateReductionBonusActor(false);
+		}
+	}
+	if(!IsValid(ReductionHalfBonus)) // Create ReductionHalfBonus
+	{ 
+		if (ChanceOfBonus > 7 && SnakeActor->SnakeElements.Num() > 10)
+		{
+			this->CreateReductionBonusActor(true);
 		}
 	}
 	
@@ -117,34 +159,31 @@ void APlayerPawnBase::CreateFoodActor()
 
 void APlayerPawnBase::CreateSpeedBonusActor()
 {
-	bool findLocation;
-	FTransform NewTransform;
-	do {
-		findLocation = true;
-		auto X = RandRange(-480, 480);
-		auto Y = RandRange(-480, 480);
-		FVector NewLocation(X, Y, 0);
-		NewTransform = FTransform(NewLocation);
-		for (auto element : SnakeActor->SnakeElements)
-		{
-			if (IsValid(element))
-			{
-				FVector ElementLocation = element->GetActorLocation();
-				FVector FoodLocation = SnakeFood->GetActorLocation();
-				if (NewLocation.X >= ElementLocation.X - 50 && NewLocation.X <= ElementLocation.X + 50 
-					&& NewLocation.X >= FoodLocation.X -50 && NewLocation.X <= FoodLocation.X + 50)
-				{
-					if (NewLocation.Y >= ElementLocation.Y - 50 && NewLocation.Y <= ElementLocation.Y + 50
-						&& NewLocation.Y >= FoodLocation.Y - 50 && NewLocation.Y <= FoodLocation.Y + 50)
-					{
-						findLocation = false;
-					}
-				}
-			}
-		}
-	} while (!findLocation);
-	SpeedBonus = GetWorld()->SpawnActor<ASpeedBonus>(SpeedBonusClass, NewTransform);
+	SpeedBonus = GetWorld()->SpawnActor<ASpeedBonus>(SpeedBonusClass, FindTransform(SnakeActor,SnakeFood, FieldLength, FieldWidth));
 	SpeedBonus->PlayerBase = this;
+}
+
+void APlayerPawnBase::CreateReductionBonusActor(bool HalfBonus)
+{
+	if (HalfBonus) 
+	{
+		ReductionHalfBonus = GetWorld()->SpawnActor<AReductionBonus>(ReductionHalfBonusClass, FindTransform(SnakeActor, SnakeFood, FieldLength, FieldWidth));
+		if(IsValid(ReductionHalfBonus))
+		{
+			ReductionHalfBonus->PlayerBase = this;
+		}
+	}
+	else
+	{
+		ReductionBonus = GetWorld()->SpawnActor<AReductionBonus>(ReductionBonusClass, FindTransform(SnakeActor, SnakeFood, FieldLength, FieldWidth));
+		if (IsValid(ReductionBonus))
+		{
+			ReductionBonus->PlayerBase = this;
+		}
+			
+	}
+	
+
 }
 
 void APlayerPawnBase::HandlePlayerVerticalInput(float value)
@@ -176,38 +215,3 @@ void APlayerPawnBase::HandlePlayerHorizontalInput(float value)
 
 	}
 }
-
-void APlayerPawnBase::CreateReductionBonusActor()
-{
-	bool findLocation;
-	FTransform NewTransform;
-	do {
-		findLocation = true;
-		auto X = RandRange(-480, 480);
-		auto Y = RandRange(-480, 480);
-		FVector NewLocation(X, Y, 0);
-		NewTransform = FTransform(NewLocation);
-		for (auto element : SnakeActor->SnakeElements)
-		{
-			if (IsValid(element))
-			{
-				FVector ElementLocation = element->GetActorLocation();
-				FVector FoodLocation = SnakeFood->GetActorLocation();
-				if (NewLocation.X >= ElementLocation.X - 50 && NewLocation.X <= ElementLocation.X + 50
-					&& NewLocation.X >= FoodLocation.X - 50 && NewLocation.X <= FoodLocation.X + 50)
-				{
-					if (NewLocation.Y >= ElementLocation.Y - 50 && NewLocation.Y <= ElementLocation.Y + 50
-						&& NewLocation.Y >= FoodLocation.Y - 50 && NewLocation.Y <= FoodLocation.Y + 50)
-					{
-						findLocation = false;
-					}
-				}
-			}
-		}
-	} while (!findLocation);
-	ReductionBonus = GetWorld()->SpawnActor<AReductionBonus>(ReductionBonusClass, NewTransform);
-	if(IsValid(ReductionBonus))
-	ReductionBonus->PlayerBase = this;
-
-}
-

@@ -3,6 +3,7 @@
 
 #include "ReductionBonus.h"
 #include "PlayerPawnBase.h"
+#include "Kismet/GameplayStatics.h"
 #include"SnakeBase.h"
 
 // Sets default values
@@ -33,8 +34,24 @@ void AReductionBonus::Interact(AActor* Interactor, bool bIsHead)
 		auto Player = Cast<APlayerPawnBase>(PlayerBase);
 		auto Snake = Cast<ASnakeBase>(Interactor);
 		if (IsValid(Snake)) {
-			Snake->RemoveSnakeElement(2);
-			this->Destroy();
+			if (BonusHalf)
+			{
+				if (IsValid(ReductionBonusEatingSound))
+				{
+					UGameplayStatics::SpawnSoundAtLocation(this, ReductionBonusEatingSound, GetActorLocation());
+				}
+				int HalfElement =  (Snake->SnakeElements.Num() / 2);
+				Snake->RemoveSnakeElement(HalfElement);
+				this->Destroy();
+			}
+			else {
+				if (IsValid(ReductionBonusEatingSound))
+				{
+					UGameplayStatics::SpawnSoundAtLocation(this, ReductionBonusEatingSound, GetActorLocation());
+				}
+				Snake->RemoveSnakeElement(2);
+				this->Destroy();
+			}
 		}
 	}
 }

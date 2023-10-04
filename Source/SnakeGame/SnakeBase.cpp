@@ -3,6 +3,7 @@
 
 #include "SnakeBase.h"
 #include "SnakeElementBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "Interactable.h"
 
 // Sets default values
@@ -75,7 +76,7 @@ void ASnakeBase::RemoveSnakeElement(int Count)
 
 void ASnakeBase::Move()
 {
-	
+
 	FVector MovementVector(ForceInitToZero);
 
 	switch (LastMovementDirection) {
@@ -93,7 +94,12 @@ void ASnakeBase::Move()
 		break;
 
 	}
-	//AddActorWorldOffset(MovementVector);
+	if (IsValid(MovementSound))
+	{
+		UGameplayStatics::SpawnSoundAtLocation(this, MovementSound, GetActorLocation());
+	}
+	
+	TikAxisChanged = true;
 	SnakeElements[0]->ToggleCollision();
 
 	for (int i = SnakeElements.Num() - 1; i > 0; i--) {
@@ -109,6 +115,9 @@ void ASnakeBase::Move()
 
 void ASnakeBase::DestroySnake()
 {
+	if (IsValid(DestroySnakeSound)) {
+		UGameplayStatics::SpawnSoundAtLocation(this, DestroySnakeSound, GetActorLocation());
+	}
 		MovementSpeed = 10000.f;
 		SetActorTickInterval(MovementSpeed);
 		SnakeDestroy = true;

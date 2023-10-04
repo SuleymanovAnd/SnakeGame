@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interactable.h"
+#include "Sound/SoundBase.h"
 #include "SpeedBonus.generated.h"
 
 
@@ -20,6 +21,8 @@ public:
 	ASpeedBonus();
 	UPROPERTY(BlueprintReadWrite)
 		APlayerPawnBase* PlayerBase;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+		USoundBase* SpeedBonusEatingSound;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

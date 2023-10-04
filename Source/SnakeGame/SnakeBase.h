@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Sound/SoundBase.h"
 #include "SnakeBase.generated.h"
 class ASnakeElementBase;
 UENUM()
@@ -33,6 +34,10 @@ public:
 		float ElementSize;
 	UPROPERTY()
 		EMovementDirection LastMovementDirection;
+	UPROPERTY(EditAnywhere, category = "Sound")
+		USoundBase* MovementSound;
+	UPROPERTY(EditAnywhere, category = "Sound")
+		USoundBase* DestroySnakeSound;
 
 	bool TikAxisChanged = false;
 

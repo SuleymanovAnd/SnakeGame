@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interactable.h"
+#include "Sound/SoundBase.h"
 #include "Food.generated.h"
 class APlayerPawnBase;
 
@@ -16,6 +17,8 @@ class SNAKEGAME_API AFood : public AActor ,public IInteractable
 public:	
 	UPROPERTY(BlueprintReadWrite)
 		APlayerPawnBase* PlayerBase;
+	UPROPERTY(EditAnywhere, Category = "Sound")
+		USoundBase* FoodEatingSound;
 
 	// Sets default values for this actor's properties
 	AFood();
