@@ -15,7 +15,6 @@ ASnakeGameModeBase::ASnakeGameModeBase() : Super()
 	HUDClass = ASnakeHUD::StaticClass();
 	ConstructorHelpers::FClassFinder <APlayerPawnBase> PlayerFinder (TEXT("/Game/Blueprints/BP_PlayerPawn"));
 	DefaultPawnClass = PlayerFinder.Class;
-	
 }
 
 void ASnakeGameModeBase::BeginPlay()
@@ -23,8 +22,6 @@ void ASnakeGameModeBase::BeginPlay()
 	Super::BeginPlay();
 	SetCurrentState(EGamePlayState::EPlaying);
 	BasePawn = Cast<APlayerPawnBase>(UGameplayStatics::GetPlayerPawn(this, 0));
-	
-
 }
 
 void ASnakeGameModeBase::Tick(float DeltaTime)
@@ -64,12 +61,21 @@ void ASnakeGameModeBase::HandleNewState(EGamePlayState NewState)
 		} break;
 	case EGamePlayState::EGameOver:
 	{
-		UGameplayStatics::OpenLevel(this, TEXT("LEVEL1"), false);
+		if (IsValid(SnakeHud))
+		{
+			SnakeHud->ShowEndMenu();
+		}
+		else
+		{
+			UGameplayStatics::OpenLevel(this, TEXT("LEVEL1"), false);
+		}
+		
+		
 	} break;
 	default:
 	case EGamePlayState::EUnknown:
 	{
-
+		
 	}break;
 	}
 }

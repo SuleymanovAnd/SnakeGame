@@ -4,18 +4,16 @@
 #include "SnakeHUD.h"
 #include "Runtime\CoreUObject\Public\UObject\ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
-
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/Pawn.h"
+#include "SnakeGameModeBase.h"
+#include "PlayerPawnBase.h"
 
 ASnakeHUD::ASnakeHUD() {
 	 static ConstructorHelpers::FClassFinder<UUserWidget> ScoreBarObj(TEXT("/Game/UI/UI_ScoreWidget"));
-
+	 static ConstructorHelpers::FClassFinder<UUserWidget> EndMenuObj(TEXT("/Game/UI/UI_EndMenu"));
 	 HUDWidgetClass = ScoreBarObj.Class;
-}
-
-
-void ASnakeHUD::DrawHUD()
-{
-	Super::DrawHUD();
+	 EndMenuWidgetClass = EndMenuObj.Class;
 }
 
 void ASnakeHUD::BeginPlay()
@@ -25,6 +23,30 @@ void ASnakeHUD::BeginPlay()
 		CurrentWidget = CreateWidget <UUserWidget>(GetWorld(), HUDWidgetClass);
 		if (CurrentWidget) {
 			CurrentWidget->AddToViewport();
+		}
+	}
+
+	GameMode = Cast <ASnakeGameModeBase> (UGameplayStatics::GetGameMode(this));
+
+	if (IsValid(GameMode))
+	{
+		GameMode->SnakeHud = this;
+	}
+}
+void ASnakeHUD::ShowEndMenu() 
+{
+	if (IsValid(CurrentWidget))
+	{
+		CurrentWidget->RemoveFromViewport();
+	}
+	if (IsValid(EndMenuWidgetClass))
+	{
+		EndMenuWidget = CreateWidget <UUserWidget>(GetWorld(), EndMenuWidgetClass);
+		if (IsValid(EndMenuWidget))
+		{
+			EndMenuWidget->AddToViewport();
+			APlayerController* Mouse = Cast<APlayerController>(GameMode->BasePawn->GetController());
+			Mouse->bShowMouseCursor = true;
 		}
 	}
 }

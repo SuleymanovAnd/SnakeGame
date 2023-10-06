@@ -4,25 +4,32 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-#include "SnakeHUD.generated.h"
 
-/**
- * 
- */
+#include "SnakeHUD.generated.h"
+class ASnakeGameModeBase;
+class UUserWidget;
+
 UCLASS()
 class SNAKEGAME_API ASnakeHUD : public AHUD
 {
 	GENERATED_BODY()
 public:
-	ASnakeHUD();
 
-	virtual void DrawHUD() override;
+	ASnakeHUD();
 
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere, category = "Widget")
+		TSubclassOf <UUserWidget> HUDWidgetClass;
+	UPROPERTY()
+		UUserWidget* CurrentWidget;
+	UPROPERTY(EditAnywhere, category = "Widget")
+		TSubclassOf <UUserWidget> EndMenuWidgetClass;
+	UPROPERTY()
+		UUserWidget* EndMenuWidget;
 	UPROPERTY(EditAnywhere)
-		TSubclassOf <class UUserWidget> HUDWidgetClass;
-	UPROPERTY(EditAnywhere)
-		class UUserWidget* CurrentWidget;
+		ASnakeGameModeBase* GameMode;
+
 	
+	void ShowEndMenu();
 };

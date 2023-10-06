@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "SnakeGameModeBase.generated.h"
 class APlayerPawnBase;
+class ASnakeHUD;
 
 UENUM()
 enum class EGamePlayState
@@ -20,6 +21,9 @@ class SNAKEGAME_API ASnakeGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 public:
+	UPROPERTY()
+		ASnakeHUD* SnakeHud;
+
 	ASnakeGameModeBase();
 
 	APlayerPawnBase* BasePawn;
