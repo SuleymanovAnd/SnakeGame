@@ -45,8 +45,14 @@ void ASnakeHUD::ShowEndMenu()
 		if (IsValid(EndMenuWidget))
 		{
 			EndMenuWidget->AddToViewport();
-			APlayerController* Mouse = Cast<APlayerController>(GameMode->BasePawn->GetController());
-			Mouse->bShowMouseCursor = true;
+			
+			APlayerController* Controller = Cast<APlayerController>(GameMode->BasePawn->GetController());
+			FInputModeUIOnly UiOnlyMode;
+			UiOnlyMode.SetWidgetToFocus(EndMenuWidget->TakeWidget());
+			UiOnlyMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+			Controller->SetInputMode(UiOnlyMode);
+			Controller->bShowMouseCursor = true;
+		
 		}
 	}
 }

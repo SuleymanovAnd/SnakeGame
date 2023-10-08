@@ -8,12 +8,12 @@
 class APlayerPawnBase;
 class ASnakeHUD;
 
-UENUM()
-enum class EGamePlayState
+UENUM(BlueprintType)
+enum class EGamePlayState : uint8
 {
-	EPlaying,
-	EGameOver,
-	EUnknown
+	EPlaying UMETA(DisplayName = "Playing"),
+	EGameOver UMETA(DisplayName = "GameOver"),
+	EUnknown UMETA(DisplayName = "Uncknown")
 };
 
 UCLASS()

@@ -75,7 +75,8 @@ void ASnakeGameModeBase::HandleNewState(EGamePlayState NewState)
 	default:
 	case EGamePlayState::EUnknown:
 	{
-		
+		UGameplayStatics::OpenLevel(this, TEXT("LEVEL1"), false);
+		FGenericPlatformMisc::RequestExit(false);
 	}break;
 	}
 }
