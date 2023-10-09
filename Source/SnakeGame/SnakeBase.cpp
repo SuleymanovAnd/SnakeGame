@@ -76,41 +76,43 @@ void ASnakeBase::RemoveSnakeElement(int Count)
 
 void ASnakeBase::Move()
 {
-
-	FVector MovementVector(ForceInitToZero);
-
-	switch (LastMovementDirection) {
-	case EMovementDirection::UP :
-		MovementVector.X += ElementSize;
-		break;
-	case EMovementDirection::DOWN :
-		MovementVector.X -= ElementSize;
-		break;
-	case EMovementDirection::LEFT :
-		MovementVector.Y -= ElementSize;
-		break;
-	case EMovementDirection::RIGHT :
-		MovementVector.Y += ElementSize;
-		break;
-
-	}
-	if (IsValid(MovementSound))
+	if (!SnakeDestroy)
 	{
-		UGameplayStatics::SpawnSoundAtLocation(this, MovementSound, GetActorLocation());
-	}
-	
-	TikAxisChanged = true;
-	SnakeElements[0]->ToggleCollision();
+		FVector MovementVector(ForceInitToZero);
 
-	for (int i = SnakeElements.Num() - 1; i > 0; i--) {
-		auto CurrentElement = SnakeElements[i];
-		auto PrevElement = SnakeElements[i-1];
-		FVector PrevLocation = PrevElement->GetActorLocation();
-		CurrentElement->MeshComponent->SetVisibility(1); 
-		CurrentElement->SetActorLocation(PrevLocation);
+		switch (LastMovementDirection) {
+		case EMovementDirection::UP:
+			MovementVector.X += ElementSize;
+			break;
+		case EMovementDirection::DOWN:
+			MovementVector.X -= ElementSize;
+			break;
+		case EMovementDirection::LEFT:
+			MovementVector.Y -= ElementSize;
+			break;
+		case EMovementDirection::RIGHT:
+			MovementVector.Y += ElementSize;
+			break;
+
 		}
-	SnakeElements[0]->AddActorWorldOffset(MovementVector);
-	SnakeElements[0]->ToggleCollision();
+		if (IsValid(MovementSound))
+		{
+			UGameplayStatics::SpawnSoundAtLocation(this, MovementSound, GetActorLocation());
+		}
+
+		TikAxisChanged = true;
+		SnakeElements[0]->ToggleCollision();
+
+		for (int i = SnakeElements.Num() - 1; i > 0; i--) {
+			auto CurrentElement = SnakeElements[i];
+			auto PrevElement = SnakeElements[i - 1];
+			FVector PrevLocation = PrevElement->GetActorLocation();
+			CurrentElement->MeshComponent->SetVisibility(1);
+			CurrentElement->SetActorLocation(PrevLocation);
+		}
+		SnakeElements[0]->AddActorWorldOffset(MovementVector);
+		SnakeElements[0]->ToggleCollision();
+	}
 }
 
 void ASnakeBase::DestroySnake()
@@ -118,8 +120,6 @@ void ASnakeBase::DestroySnake()
 	if (IsValid(DestroySnakeSound)) {
 		UGameplayStatics::SpawnSoundAtLocation(this, DestroySnakeSound, GetActorLocation());
 	}
-		MovementSpeed = 10000.f;
-		SetActorTickInterval(MovementSpeed);
 		SnakeDestroy = true;
 }
 
