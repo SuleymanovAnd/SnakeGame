@@ -5,13 +5,11 @@
 #include "Kismet/GameplayStatics.h"
 #include "SnakeHUD.h"
 #include "PlayerPawnBase.h"
-#include "TimerManager.h"
 #include "UObject/ConstructorHelpers.h"
 #include "SnakeBase.h"
 
 ASnakeGameModeBase::ASnakeGameModeBase() : Super()
 {
-	PrimaryActorTick.bCanEverTick = true;
 	HUDClass = ASnakeHUD::StaticClass();
 	ConstructorHelpers::FClassFinder <APlayerPawnBase> PlayerFinder (TEXT("/Game/Blueprints/BP_PlayerPawn"));
 	DefaultPawnClass = PlayerFinder.Class;
@@ -22,22 +20,6 @@ void ASnakeGameModeBase::BeginPlay()
 	Super::BeginPlay();
 	SetCurrentState(EGamePlayState::EPlaying);
 	BasePawn = Cast<APlayerPawnBase>(UGameplayStatics::GetPlayerPawn(this, 0));
-}
-
-void ASnakeGameModeBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	
-	
-	if (BasePawn->SnakeActor->SnakeDestroy && !EndGame) // End Game Delay
-	{
-		GetWorldTimerManager().SetTimer(Timer, 3, false);
-		EndGame = true;
-	}
-	if (!GetWorldTimerManager().IsTimerActive(Timer) && BasePawn->SnakeActor->SnakeDestroy) {
-		SetCurrentState(EGamePlayState::EGameOver);
-	}
-	
 }
 
 EGamePlayState ASnakeGameModeBase::GetCurrentState() const
@@ -76,7 +58,7 @@ void ASnakeGameModeBase::HandleNewState(EGamePlayState NewState)
 	case EGamePlayState::EUnknown:
 	{
 		UGameplayStatics::OpenLevel(this, TEXT("LEVEL1"), false);
-		FGenericPlatformMisc::RequestExit(false);
+	//	FGenericPlatformMisc::RequestExit(false);
 	}break;
 	}
 }

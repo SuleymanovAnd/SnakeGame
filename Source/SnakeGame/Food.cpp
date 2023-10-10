@@ -38,7 +38,7 @@ void AFood::Interact(AActor* Interactor, bool bIsHead)
 				UGameplayStatics::SpawnSoundAtLocation(this, FoodEatingSound, GetActorLocation());
 			}
 			Player->CreateFoodActor();
-			Player->Score++;
+			Player->ScoreSturct.Score++;
 			Snake->AddSnakeElement();
 			this->Destroy();
 		}

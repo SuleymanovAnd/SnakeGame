@@ -4,8 +4,16 @@
 #include "SnakeBase.h"
 #include "SnakeElementBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "SnakeGameModeBase.h"
+#include "TimerManager.h"
 #include "Interactable.h"
 
+void ASnakeBase::SetEndGame() {
+	if (SnakeDestroy) {
+		auto CurrentGameMode = Cast <ASnakeGameModeBase>(UGameplayStatics::GetGameMode(this));
+		CurrentGameMode->SetCurrentState(EGamePlayState::EGameOver);
+	}
+}
 // Sets default values
 ASnakeBase::ASnakeBase()
 {
@@ -117,10 +125,13 @@ void ASnakeBase::Move()
 
 void ASnakeBase::DestroySnake()
 {
-	if (IsValid(DestroySnakeSound)) {
+	if (IsValid(DestroySnakeSound)) 
+	{
 		UGameplayStatics::SpawnSoundAtLocation(this, DestroySnakeSound, GetActorLocation());
 	}
 		SnakeDestroy = true;
+
+		GetWorld()->GetTimerManager().SetTimer(Timer, this, &ASnakeBase::SetEndGame,3, false);// End Game Delay
 }
 
 void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActor* Other)

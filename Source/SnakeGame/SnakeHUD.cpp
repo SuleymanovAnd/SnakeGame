@@ -38,6 +38,7 @@ void ASnakeHUD::ShowEndMenu()
 	if (IsValid(CurrentWidget))
 	{
 		CurrentWidget->RemoveFromViewport();
+		CurrentWidget->Destruct();
 	}
 	if (IsValid(EndMenuWidgetClass))
 	{
@@ -46,13 +47,16 @@ void ASnakeHUD::ShowEndMenu()
 		{
 			EndMenuWidget->AddToViewport();
 			
+
 			APlayerController* Controller = Cast<APlayerController>(GameMode->BasePawn->GetController());
 			FInputModeUIOnly UiOnlyMode;
+			EndMenuWidget->SetCursor(Controller->GetMouseCursor());
 			UiOnlyMode.SetWidgetToFocus(EndMenuWidget->TakeWidget());
 			UiOnlyMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 			Controller->SetInputMode(UiOnlyMode);
 			Controller->bShowMouseCursor = true;
-		
+			
+
 		}
 	}
 }

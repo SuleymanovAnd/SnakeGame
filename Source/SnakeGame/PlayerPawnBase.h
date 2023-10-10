@@ -11,6 +11,19 @@ class AFood;
 class ASpeedBonus;
 class AReductionBonus;
 
+USTRUCT(BlueprintType)
+struct FScoreStruct 
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 Place = 1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		FString Name = TEXT ("Player");
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		int32 Score = 0;
+};
+
 UCLASS()
 class SNAKEGAME_API APlayerPawnBase : public APawn
 {
@@ -42,7 +55,8 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<AReductionBonus> ReductionHalfBonusClass;
 	UPROPERTY(BlueprintReadOnly, Category = "Score")
-		int32 Score;
+		FScoreStruct ScoreSturct;
+	
 	/** Half the full width of the field is indicated. (extreme limit relative to zero). The value must be divisible by 60 without a remainder. */
 	UPROPERTY(EditAnywhere, Category = "Field")
 		int32 FieldWidth = 480;

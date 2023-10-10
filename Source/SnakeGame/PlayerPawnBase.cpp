@@ -83,21 +83,20 @@ APlayerPawnBase::APlayerPawnBase()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
 	PawnCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("PawnCamera"));
 	RootComponent = PawnCamera;
 }
 
 int32 APlayerPawnBase::GetScore()
 {
-	return APlayerPawnBase::Score;
+	return APlayerPawnBase::ScoreSturct.Score;
 }
 
 // Called when the game starts or when spawned
 void APlayerPawnBase::BeginPlay()
 {
 	Super::BeginPlay();
-	Score = 0;
+	;
 	SetActorRotation(FRotator(-90, 0, 0));
 	CreateSnakeActor();
 	CreateFoodActor();
@@ -135,21 +134,21 @@ void APlayerPawnBase::CreateFoodActor()
 
 	if (!IsValid(SpeedBonus)) // Create SpeedBonus
 	{
-		if (ChanceOfBonus == 3  && SnakeActor->MovementSpeed > 0.2f)
+		if ((ChanceOfBonus == 3 || ChanceOfBonus == 2 ) && SnakeActor->MovementSpeed > 0.2f)
 		{
 			this->CreateSpeedBonusActor();
 		}
 	}
 	if (!IsValid(ReductionBonus))  // Create ReductionBonus
 	{
-		if (ChanceOfBonus > 3 && ChanceOfBonus << 7 && SnakeActor->SnakeElements.Num()>3)
+		if (ChanceOfBonus > 3 && ChanceOfBonus < 7 && SnakeActor->SnakeElements.Num()>3)
 		{
 			this->CreateReductionBonusActor(false);
 		}
 	}
 	if(!IsValid(ReductionHalfBonus)) // Create ReductionHalfBonus
 	{ 
-		if (ChanceOfBonus > 7 && SnakeActor->SnakeElements.Num() > 10)
+		if ((ChanceOfBonus == 7 || ChanceOfBonus == 8) && SnakeActor->SnakeElements.Num() > 10)
 		{
 			this->CreateReductionBonusActor(true);
 		}
@@ -160,6 +159,7 @@ void APlayerPawnBase::CreateFoodActor()
 void APlayerPawnBase::CreateSpeedBonusActor()
 {
 	SpeedBonus = GetWorld()->SpawnActor<ASpeedBonus>(SpeedBonusClass, FindTransform(SnakeActor,SnakeFood, FieldLength, FieldWidth));
+	if(IsValid (SpeedBonus))
 	SpeedBonus->PlayerBase = this;
 }
 

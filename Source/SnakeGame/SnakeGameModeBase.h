@@ -30,8 +30,6 @@ public:
 
 	virtual void BeginPlay() override;
 
-	virtual void Tick(float DeltaTime) override;
-
 	EGamePlayState GetCurrentState() const;
 
 	UFUNCTION()
@@ -41,7 +39,6 @@ public:
 private:
 	EGamePlayState CurrentState;
 	void HandleNewState(EGamePlayState NewState);
-	FTimerHandle Timer;
 	bool EndGame = false;
 
 };

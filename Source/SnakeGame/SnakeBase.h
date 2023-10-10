@@ -39,7 +39,9 @@ public:
 	UPROPERTY(EditAnywhere, category = "Sound")
 		USoundBase* DestroySnakeSound;
 
-	bool TikAxisChanged = false;
+	bool TikAxisChanged = false; // limitation on accepting keyboard events for snake movement
+
+	FTimerHandle Timer; // timer for end game
 
 	UPROPERTY(BlueprintReadOnly)
 	bool SnakeDestroy = false;
@@ -64,5 +66,7 @@ public:
 		void SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActor* Other);
 	UFUNCTION(BlueprintPure)
 		float GetMovementSpeed();
+
+	void SetEndGame();
 
 };
