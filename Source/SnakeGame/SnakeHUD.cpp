@@ -31,6 +31,7 @@ void ASnakeHUD::BeginPlay()
 	if (IsValid(GameMode))
 	{
 		GameMode->SnakeHud = this;
+		
 	}
 }
 void ASnakeHUD::ShowEndMenu() 
@@ -47,7 +48,6 @@ void ASnakeHUD::ShowEndMenu()
 		{
 			EndMenuWidget->AddToViewport();
 			
-
 			APlayerController* Controller = Cast<APlayerController>(GameMode->BasePawn->GetController());
 			FInputModeUIOnly UiOnlyMode;
 			EndMenuWidget->SetCursor(Controller->GetMouseCursor());

@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
-
 #include "SnakeHUD.generated.h"
 class ASnakeGameModeBase;
 class UUserWidget;

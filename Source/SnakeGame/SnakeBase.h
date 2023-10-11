@@ -5,8 +5,14 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Sound/SoundBase.h"
+#include "PlayerPawnBase.h"
+#include "SnakeHUD.h"
+#include "GameFramework/SaveGame.h"
 #include "SnakeBase.generated.h"
 class ASnakeElementBase;
+class UScoreSave;
+class ASnakeHUD;
+
 UENUM()
 enum class EMovementDirection {
 	UP,
@@ -38,10 +44,16 @@ public:
 		USoundBase* MovementSound;
 	UPROPERTY(EditAnywhere, category = "Sound")
 		USoundBase* DestroySnakeSound;
+	UPROPERTY(EditDefaultsOnly, category = "Save")
+		UScoreSave* SaveSlot;
 
 	bool TikAxisChanged = false; // limitation on accepting keyboard events for snake movement
 
 	FTimerHandle Timer; // timer for end game
+
+	ASnakeGameModeBase* CurrentGameMode;
+
+	APlayerPawnBase* CurrentPlayer;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool SnakeDestroy = false;
@@ -66,7 +78,9 @@ public:
 		void SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActor* Other);
 	UFUNCTION(BlueprintPure)
 		float GetMovementSpeed();
-
+	UFUNCTION(BlueprintCallable)
 	void SetEndGame();
+
+	bool FillSaveSlot(UScoreSave* SaveSlot);
 
 };

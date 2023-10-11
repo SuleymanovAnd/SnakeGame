@@ -92,6 +92,11 @@ int32 APlayerPawnBase::GetScore()
 	return APlayerPawnBase::ScoreSturct.Score;
 }
 
+void APlayerPawnBase::SetPlayerName(FString name)
+{
+	ScoreSturct.Name = name;
+}
+
 // Called when the game starts or when spawned
 void APlayerPawnBase::BeginPlay()
 {
@@ -124,6 +129,7 @@ void APlayerPawnBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 void APlayerPawnBase::CreateSnakeActor()
 {
 	SnakeActor = GetWorld()->SpawnActor<ASnakeBase>(SnakeAktorClass, FTransform());
+	SnakeActor->CurrentPlayer = this;
 }
 
 void APlayerPawnBase::CreateFoodActor() 

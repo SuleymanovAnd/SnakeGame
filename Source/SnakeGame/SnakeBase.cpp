@@ -6,11 +6,13 @@
 #include "Kismet/GameplayStatics.h"
 #include "SnakeGameModeBase.h"
 #include "TimerManager.h"
+#include "Blueprint/UserWidget.h"
+#include "ScoreSave.h"
+#include "SnakeHUD.h"
 #include "Interactable.h"
 
 void ASnakeBase::SetEndGame() {
 	if (SnakeDestroy) {
-		auto CurrentGameMode = Cast <ASnakeGameModeBase>(UGameplayStatics::GetGameMode(this));
 		CurrentGameMode->SetCurrentState(EGamePlayState::EGameOver);
 	}
 }
@@ -22,6 +24,7 @@ ASnakeBase::ASnakeBase()
 	ElementSize = 100.f;
 	MovementSpeed = 1.f;
 	LastMovementDirection = EMovementDirection::DOWN;
+	CurrentGameMode = Cast <ASnakeGameModeBase>(UGameplayStatics::GetGameMode(this));
 }
 
 // Called when the game starts or when spawned
@@ -123,6 +126,41 @@ void ASnakeBase::Move()
 	}
 }
 
+bool ASnakeBase::FillSaveSlot(UScoreSave* SaveSlot)
+{
+	// Find place in SaveClot
+	int32 CurrentPlace = 0;
+	for (FScoreStruct FStruct : SaveSlot->ScoreArr)
+	{
+		if (FStruct.Score < CurrentPlayer->ScoreSturct.Score) {
+			CurrentPlace = FStruct.Place;
+		}
+	}
+	// Add Score and Name in Slot
+	if (CurrentPlace)
+	{
+		CurrentPlayer->SaveScore = true;
+		APlayerController* Controller = Cast<APlayerController>(CurrentPlayer->GetController());
+		FInputModeUIOnly UiOnlyMode;
+		UiOnlyMode.SetWidgetToFocus(CurrentGameMode->SnakeHud->CurrentWidget->TakeWidget());
+		UiOnlyMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+		Controller->SetInputMode(UiOnlyMode);
+		Controller->bShowMouseCursor = true;
+
+		CurrentPlayer->ScoreSturct.Place = CurrentPlace;
+		SaveSlot->ScoreArr.EmplaceAt(CurrentPlace, CurrentPlayer->ScoreSturct);
+		for (int32 i = CurrentPlace; i < SaveSlot->ScoreArr.Num(); i++)
+		{
+			SaveSlot->ScoreArr[i].Place = i;
+		}
+		UGameplayStatics::SaveGameToSlot(SaveSlot, TEXT("ScoreSave"), 0);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
 void ASnakeBase::DestroySnake()
 {
 	if (IsValid(DestroySnakeSound)) 
@@ -130,8 +168,20 @@ void ASnakeBase::DestroySnake()
 		UGameplayStatics::SpawnSoundAtLocation(this, DestroySnakeSound, GetActorLocation());
 	}
 		SnakeDestroy = true;
-
-		GetWorld()->GetTimerManager().SetTimer(Timer, this, &ASnakeBase::SetEndGame,3, false);// End Game Delay
+		SaveSlot = Cast<UScoreSave>(UGameplayStatics::LoadGameFromSlot(TEXT("ScoreSave"), 0));
+		bool NewScore = false;
+		if (IsValid(SaveSlot)) {
+			NewScore = FillSaveSlot(SaveSlot);
+		}
+		else {
+			// create SaveSlot
+			SaveSlot = Cast <UScoreSave>(UGameplayStatics::CreateSaveGameObject(UScoreSave::StaticClass()));
+			NewScore = FillSaveSlot(SaveSlot);
+		}
+		
+		if (!NewScore) {
+			GetWorld()->GetTimerManager().SetTimer(Timer, this, &ASnakeBase::SetEndGame, 3, false);// End Game Delay
+		}
 }
 
 void ASnakeBase::SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActor* Other)

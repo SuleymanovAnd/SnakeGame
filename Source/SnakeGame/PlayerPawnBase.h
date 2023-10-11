@@ -22,6 +22,8 @@ public:
 		FString Name = TEXT ("Player");
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 Score = 0;
+	FScoreStruct(){}
+	FScoreStruct(int32 place, FString name, int32 score) : Place(place), Name(name), Score(score){}
 };
 
 UCLASS()
@@ -56,6 +58,8 @@ public:
 		TSubclassOf<AReductionBonus> ReductionHalfBonusClass;
 	UPROPERTY(BlueprintReadOnly, Category = "Score")
 		FScoreStruct ScoreSturct;
+	UPROPERTY(BlueprintReadOnly, Category = "Score")
+		bool SaveScore = false;
 	
 	/** Half the full width of the field is indicated. (extreme limit relative to zero). The value must be divisible by 60 without a remainder. */
 	UPROPERTY(EditAnywhere, Category = "Field")
@@ -85,4 +89,6 @@ public:
 		void HandlePlayerHorizontalInput(float value);
 	UFUNCTION(BlueprintPure, Category = "Score")
 		int32 GetScore();
+	UFUNCTION(BlueprintCallable)
+		void SetPlayerName(FString name);
 };
