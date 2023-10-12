@@ -11,3 +11,8 @@ UScoreSave::UScoreSave()
 	}
 	
 }
+
+TArray <FScoreStruct> UScoreSave:: GetScoreArr()
+{
+	return ScoreArr;
+}

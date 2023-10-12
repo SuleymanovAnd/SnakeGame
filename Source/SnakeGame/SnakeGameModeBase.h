@@ -21,7 +21,7 @@ class SNAKEGAME_API ASnakeGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	ASnakeHUD* SnakeHud;
 
 	ASnakeGameModeBase();

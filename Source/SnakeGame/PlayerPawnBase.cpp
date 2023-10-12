@@ -95,6 +95,7 @@ int32 APlayerPawnBase::GetScore()
 void APlayerPawnBase::SetPlayerName(FString name)
 {
 	ScoreSturct.Name = name;
+	NameChanged = true;
 }
 
 // Called when the game starts or when spawned

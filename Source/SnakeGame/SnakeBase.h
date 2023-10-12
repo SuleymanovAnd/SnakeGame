@@ -44,7 +44,7 @@ public:
 		USoundBase* MovementSound;
 	UPROPERTY(EditAnywhere, category = "Sound")
 		USoundBase* DestroySnakeSound;
-	UPROPERTY(EditDefaultsOnly, category = "Save")
+	UPROPERTY(BlueprintReadWrite, category = "Save")
 		UScoreSave* SaveSlot;
 
 	bool TikAxisChanged = false; // limitation on accepting keyboard events for snake movement
@@ -80,6 +80,8 @@ public:
 		float GetMovementSpeed();
 	UFUNCTION(BlueprintCallable)
 	void SetEndGame();
+	UFUNCTION(BlueprintPure)
+		UUserWidget* GetEndWidget();
 
 	bool FillSaveSlot(UScoreSave* SaveSlot);
 

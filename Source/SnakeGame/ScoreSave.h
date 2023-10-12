@@ -19,4 +19,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 		TArray <FScoreStruct> ScoreArr;
+	UFUNCTION(BlueprintCallable)
+		TArray <FScoreStruct> GetScoreArr();
 };

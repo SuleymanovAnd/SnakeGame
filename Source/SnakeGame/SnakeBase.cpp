@@ -9,6 +9,7 @@
 #include "Blueprint/UserWidget.h"
 #include "ScoreSave.h"
 #include "SnakeHUD.h"
+#include "Async/Future.h"
 #include "Interactable.h"
 
 void ASnakeBase::SetEndGame() {
@@ -126,6 +127,11 @@ void ASnakeBase::Move()
 	}
 }
 
+UUserWidget* ASnakeBase::GetEndWidget() 
+{
+	return CurrentGameMode->SnakeHud->EndMenuWidget;
+}
+
 bool ASnakeBase::FillSaveSlot(UScoreSave* SaveSlot)
 {
 	// Find place in SaveClot
@@ -134,6 +140,7 @@ bool ASnakeBase::FillSaveSlot(UScoreSave* SaveSlot)
 	{
 		if (FStruct.Score < CurrentPlayer->ScoreSturct.Score) {
 			CurrentPlace = FStruct.Place;
+			break;
 		}
 	}
 	// Add Score and Name in Slot
@@ -148,15 +155,16 @@ bool ASnakeBase::FillSaveSlot(UScoreSave* SaveSlot)
 		Controller->bShowMouseCursor = true;
 
 		CurrentPlayer->ScoreSturct.Place = CurrentPlace;
-		SaveSlot->ScoreArr.EmplaceAt(CurrentPlace, CurrentPlayer->ScoreSturct);
-		for (int32 i = CurrentPlace; i < SaveSlot->ScoreArr.Num(); i++)
+		SaveSlot->ScoreArr.EmplaceAt((CurrentPlace - 1), CurrentPlayer->ScoreSturct);
+		for (int32 i = (CurrentPlace - 1); i < SaveSlot->ScoreArr.Num(); i++)
 		{
-			SaveSlot->ScoreArr[i].Place = i;
+				SaveSlot->ScoreArr[i].Place = (i + 1);
 		}
 		UGameplayStatics::SaveGameToSlot(SaveSlot, TEXT("ScoreSave"), 0);
 		return true;
 	}
-	else {
+	else 
+	{
 		return false;
 	}
 }

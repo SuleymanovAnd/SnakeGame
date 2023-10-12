@@ -68,6 +68,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Field")
 		int32 FieldLength = 480;
 
+	bool NameChanged = false;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
