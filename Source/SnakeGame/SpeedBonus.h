@@ -23,6 +23,8 @@ public:
 		APlayerPawnBase* PlayerBase;
 	UPROPERTY(EditAnywhere, Category = "Sound")
 		USoundBase* SpeedBonusEatingSound;
+	UPROPERTY(EditDefaultsOnly)
+		bool AntiBonus = false;
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

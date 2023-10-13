@@ -49,6 +49,10 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<ASpeedBonus> SpeedBonusClass;
 	UPROPERTY(BlueprintReadWrite)
+		ASpeedBonus* SpeedAntiBonus;
+	UPROPERTY(EditDefaultsOnly)
+		TSubclassOf<ASpeedBonus> SpeedAntiBonusClass;
+	UPROPERTY(BlueprintReadWrite)
 		AReductionBonus* ReductionBonus;
 	UPROPERTY(EditDefaultsOnly)
 		TSubclassOf<AReductionBonus> ReductionBonusClass;
@@ -83,6 +87,7 @@ public:
 	void CreateSnakeActor();
 	void CreateFoodActor();
 	void CreateSpeedBonusActor();
+	void CreateSpeedAntiBonusActor();
 	void CreateReductionBonusActor(bool HalfBonus);
 
 	UFUNCTION()

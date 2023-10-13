@@ -62,6 +62,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+private:
+	int32 CurrentPlace;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -74,15 +76,17 @@ public:
 
 	void DestroySnake();
 
+	void SaveScore();
+
+	bool FillSaveSlot(UScoreSave* SaveSlot);
+
 	UFUNCTION()
 		void SnakeElementOverlap(ASnakeElementBase* OverlappedElement, AActor* Other);
 	UFUNCTION(BlueprintPure)
 		float GetMovementSpeed();
 	UFUNCTION(BlueprintCallable)
-	void SetEndGame();
+		void SetEndGame();
 	UFUNCTION(BlueprintPure)
 		UUserWidget* GetEndWidget();
-
-	bool FillSaveSlot(UScoreSave* SaveSlot);
 
 };

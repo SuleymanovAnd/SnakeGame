@@ -9,7 +9,6 @@
 #include "Blueprint/UserWidget.h"
 #include "ScoreSave.h"
 #include "SnakeHUD.h"
-#include "Async/Future.h"
 #include "Interactable.h"
 
 void ASnakeBase::SetEndGame() {
@@ -135,7 +134,7 @@ UUserWidget* ASnakeBase::GetEndWidget()
 bool ASnakeBase::FillSaveSlot(UScoreSave* SaveSlot)
 {
 	// Find place in SaveClot
-	int32 CurrentPlace = 0;
+	CurrentPlace = 0;
 	for (FScoreStruct FStruct : SaveSlot->ScoreArr)
 	{
 		if (FStruct.Score < CurrentPlayer->ScoreSturct.Score) {
@@ -153,20 +152,35 @@ bool ASnakeBase::FillSaveSlot(UScoreSave* SaveSlot)
 		UiOnlyMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 		Controller->SetInputMode(UiOnlyMode);
 		Controller->bShowMouseCursor = true;
-
-		CurrentPlayer->ScoreSturct.Place = CurrentPlace;
-		SaveSlot->ScoreArr.EmplaceAt((CurrentPlace - 1), CurrentPlayer->ScoreSturct);
-		for (int32 i = (CurrentPlace - 1); i < SaveSlot->ScoreArr.Num(); i++)
-		{
-				SaveSlot->ScoreArr[i].Place = (i + 1);
-		}
-		UGameplayStatics::SaveGameToSlot(SaveSlot, TEXT("ScoreSave"), 0);
+		//
+		// Waiting player name and SaveScore
+		//
 		return true;
 	}
 	else 
 	{
 		return false;
 	}
+}
+
+void ASnakeBase::SaveScore()
+{
+	CurrentPlayer->ScoreSturct.Place = CurrentPlace;
+
+	SaveSlot->ScoreArr.EmplaceAt((CurrentPlace - 1), CurrentPlayer->ScoreSturct);
+	if (SaveSlot->ScoreArr.Num() > 10)
+	{
+		for (int i = (SaveSlot->ScoreArr.Num()-1); i >= 10; i--)
+		{
+			SaveSlot->ScoreArr.RemoveAt(i);
+		}
+		
+	}
+	for (int32 i = (CurrentPlace - 1); i < SaveSlot->ScoreArr.Num(); i++)
+	{
+		SaveSlot->ScoreArr[i].Place = (i + 1);
+	}
+	UGameplayStatics::SaveGameToSlot(SaveSlot, TEXT("ScoreSave"), 0);
 }
 
 void ASnakeBase::DestroySnake()

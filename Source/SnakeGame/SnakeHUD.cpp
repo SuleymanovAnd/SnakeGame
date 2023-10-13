@@ -6,6 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Pawn.h"
+#include "SnakeBase.h"
 #include "SnakeGameModeBase.h"
 #include "PlayerPawnBase.h"
 
@@ -40,6 +41,10 @@ void ASnakeHUD::ShowEndMenu()
 	{
 		CurrentWidget->RemoveFromViewport();
 		CurrentWidget->Destruct();
+	}
+	if (GameMode->BasePawn->NameChanged) 
+	{
+		GameMode->BasePawn->SnakeActor->SaveScore(); 
 	}
 	if (IsValid(EndMenuWidgetClass))
 	{

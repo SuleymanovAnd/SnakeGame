@@ -146,6 +146,16 @@ void APlayerPawnBase::CreateFoodActor()
 			this->CreateSpeedBonusActor();
 		}
 	}
+	if (!IsValid(SpeedAntiBonus)) // Create SpeedBonus
+	{
+		if (ChanceOfBonus == 1 && SnakeActor->MovementSpeed < 0.8f)
+		{
+			this->CreateSpeedAntiBonusActor();
+		}else if (SnakeActor->MovementSpeed <= 0.3f)
+		{
+			this->CreateSpeedAntiBonusActor();
+		}
+	}
 	if (!IsValid(ReductionBonus))  // Create ReductionBonus
 	{
 		if (ChanceOfBonus > 3 && ChanceOfBonus < 7 && SnakeActor->SnakeElements.Num()>3)
@@ -168,6 +178,13 @@ void APlayerPawnBase::CreateSpeedBonusActor()
 	SpeedBonus = GetWorld()->SpawnActor<ASpeedBonus>(SpeedBonusClass, FindTransform(SnakeActor,SnakeFood, FieldLength, FieldWidth));
 	if(IsValid (SpeedBonus))
 	SpeedBonus->PlayerBase = this;
+}
+
+void APlayerPawnBase::CreateSpeedAntiBonusActor()
+{
+	SpeedAntiBonus = GetWorld()->SpawnActor<ASpeedBonus>(SpeedAntiBonusClass, FindTransform(SnakeActor, SnakeFood, FieldLength, FieldWidth));
+	if (IsValid(SpeedAntiBonus))
+		SpeedAntiBonus->PlayerBase = this;
 }
 
 void APlayerPawnBase::CreateReductionBonusActor(bool HalfBonus)

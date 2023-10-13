@@ -34,15 +34,33 @@ void ASpeedBonus::Interact(AActor* Interactor, bool bIsHead)
 	if (bIsHead) {
 		auto Player = Cast<APlayerPawnBase>(PlayerBase);
 		auto Snake = Cast<ASnakeBase>(Interactor);
-		if (IsValid(Snake)) {
-			if (IsValid(SpeedBonusEatingSound))
-			{
-				UGameplayStatics::SpawnSoundAtLocation(this, SpeedBonusEatingSound, GetActorLocation());
+		if (AntiBonus) 
+		{
+			if (IsValid(Snake)) {
+				if (IsValid(SpeedBonusEatingSound))
+				{
+					UGameplayStatics::SpawnSoundAtLocation(this, SpeedBonusEatingSound, GetActorLocation());
+				}
+				Snake->MovementSpeed += 0.1f;
+				Snake->SetActorTickInterval(Snake->MovementSpeed);
+				this->Destroy();
 			}
-			Snake->MovementSpeed -= 0.1f;
-			Snake->SetActorTickInterval(Snake->MovementSpeed);
-			this->Destroy();
+
 		}
+		else
+		{
+			
+			if (IsValid(Snake)) {
+				if (IsValid(SpeedBonusEatingSound))
+				{
+					UGameplayStatics::SpawnSoundAtLocation(this, SpeedBonusEatingSound, GetActorLocation());
+				}
+				Snake->MovementSpeed -= 0.1f;
+				Snake->SetActorTickInterval(Snake->MovementSpeed);
+				this->Destroy();
+			}
+		}
+		
 	}
 	else
 	{
