@@ -31,4 +31,5 @@ public:
 
 	
 	void ShowEndMenu();
+	void ShowScoreMenu();
 };

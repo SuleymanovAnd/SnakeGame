@@ -39,7 +39,14 @@ void ASnakeGameModeBase::HandleNewState(EGamePlayState NewState)
 	{
 	case EGamePlayState::EPlaying:
 		{
-
+		if (UGameplayStatics::IsGamePaused(this))
+		{
+			if (IsValid(SnakeHud))
+			{
+				SnakeHud->ShowScoreMenu();
+			}
+			UGameplayStatics::SetGamePaused(this, false);
+		}
 		} break;
 	case EGamePlayState::EGameOver:
 	{
@@ -55,10 +62,17 @@ void ASnakeGameModeBase::HandleNewState(EGamePlayState NewState)
 		
 	} break;
 	default:
-	case EGamePlayState::EUnknown:
+	case EGamePlayState::EPause:
 	{
-		UGameplayStatics::OpenLevel(this, TEXT("LEVEL1"), false);
-	//	FGenericPlatformMisc::RequestExit(false);
+		if (!UGameplayStatics::IsGamePaused(this)) 
+		{
+			UGameplayStatics::SetGamePaused(this, true);
+			if (IsValid(SnakeHud))
+			{
+				SnakeHud->ShowEndMenu();
+			}
+		}
+		
 	}break;
 	}
 }

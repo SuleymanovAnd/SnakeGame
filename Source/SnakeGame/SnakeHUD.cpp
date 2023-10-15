@@ -35,12 +35,28 @@ void ASnakeHUD::BeginPlay()
 		
 	}
 }
+void ASnakeHUD::ShowScoreMenu()
+{
+	if (IsValid(EndMenuWidget))
+	{
+		EndMenuWidget->RemoveFromViewport();
+	}
+	if (!IsValid(CurrentWidget))
+	{
+		CurrentWidget = CreateWidget <UUserWidget>(GetWorld(), HUDWidgetClass);
+	}
+	else 
+	{
+		CurrentWidget->AddToViewport();
+		FInputModeGameOnly InputMode;
+		UGameplayStatics::GetPlayerController(GetWorld(), 0)->SetInputMode(InputMode);
+	}
+}
 void ASnakeHUD::ShowEndMenu() 
 {
 	if (IsValid(CurrentWidget))
 	{
 		CurrentWidget->RemoveFromViewport();
-		CurrentWidget->Destruct();
 	}
 	if (GameMode->BasePawn->NameChanged) 
 	{
@@ -48,7 +64,11 @@ void ASnakeHUD::ShowEndMenu()
 	}
 	if (IsValid(EndMenuWidgetClass))
 	{
-		EndMenuWidget = CreateWidget <UUserWidget>(GetWorld(), EndMenuWidgetClass);
+		if (!IsValid(EndMenuWidget))
+		{
+			EndMenuWidget = CreateWidget <UUserWidget>(GetWorld(), EndMenuWidgetClass);
+		}
+		
 		if (IsValid(EndMenuWidget))
 		{
 			EndMenuWidget->AddToViewport();

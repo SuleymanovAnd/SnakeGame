@@ -33,6 +33,11 @@ void ASnakeBase::BeginPlay()
 	Super::BeginPlay();
 	SetActorTickInterval(MovementSpeed);
 	AddSnakeElement(4);
+	SaveSlot = Cast<UScoreSave>(UGameplayStatics::LoadGameFromSlot(TEXT("ScoreSave"), 0));
+	if (!IsValid(SaveSlot) )
+	{
+		SaveSlot = Cast <UScoreSave>(UGameplayStatics::CreateSaveGameObject(UScoreSave::StaticClass()));
+	}
 }
 
 // Called every frame

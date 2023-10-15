@@ -13,7 +13,7 @@ enum class EGamePlayState : uint8
 {
 	EPlaying UMETA(DisplayName = "Playing"),
 	EGameOver UMETA(DisplayName = "GameOver"),
-	EUnknown UMETA(DisplayName = "Uncknown")
+	EPause UMETA(DisplayName = "Pause")
 };
 
 UCLASS()
@@ -30,9 +30,10 @@ public:
 
 	virtual void BeginPlay() override;
 
+	UFUNCTION(BlueprintPure)
 	EGamePlayState GetCurrentState() const;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetCurrentState(EGamePlayState NewState);
 
 

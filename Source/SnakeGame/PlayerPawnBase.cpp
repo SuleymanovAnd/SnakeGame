@@ -165,7 +165,7 @@ void APlayerPawnBase::CreateFoodActor()
 	}
 	if(!IsValid(ReductionHalfBonus)) // Create ReductionHalfBonus
 	{ 
-		if ((ChanceOfBonus == 7 || ChanceOfBonus == 8) && SnakeActor->SnakeElements.Num() > 10)
+		if (ChanceOfBonus == 7 && SnakeActor->SnakeElements.Num() > 10)
 		{
 			this->CreateReductionBonusActor(true);
 		}
